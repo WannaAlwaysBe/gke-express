@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gke-express-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: gke-express
+  template:
+    metadata:
+      labels:
+        app: gke-express
+    spec:
+      containers:
+      - name: gke-express
+        image: europe-west1-docker.pkg.dev/round-cacao-444014-e3/gke-express-repo/gke-express:latest
+        ports:
+        - containerPort: 8080

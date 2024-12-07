@@ -1,0 +1,29 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - europe-west1-docker.pkg.dev/round-cacao-444014-e3/gke-express-repo/gke-express:$SHORT_SHA
+      - '.'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - europe-west1-docker.pkg.dev/round-cacao-444014-e3/gke-express-repo/gke-express:$SHORT_SHA
+
+  - name: 'gcr.io/cloud-builders/kubectl'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=europe-west1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=gke-express-cluster'
+    args:
+      - set
+      - image
+      - deployment/gke-express-deployment
+      - gke-express=europe-west1-docker.pkg.dev/round-cacao-444014-e3/gke-express-repo/gke-express:$SHORT_SHA
+
+
+images:
+  - 'europe-west1-docker.pkg.dev/round-cacao-444014-e3/gke-express-repo/gke-express:$SHORT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

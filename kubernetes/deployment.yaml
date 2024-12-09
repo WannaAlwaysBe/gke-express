@@ -12,7 +12,10 @@ spec:
       labels:
         app: gke-express
     spec:
-      serviceAccountName: gke-express-ksa
+      volumes:
+        - name: gke-express-sa-secret-v
+          secret:
+            secretName: gke-express-sa-secret
       containers:
       - name: gke-express
         image: europe-west1-docker.pkg.dev/round-cacao-444014-e3/gke-express-repo/gke-express:latest
@@ -40,5 +43,10 @@ spec:
           - "--private-ip"
           - "--port=3306"
           - "round-cacao-444014-e3:europe-west1:gke-express-sql"
+          - "--credentials-file=/secrets/service_account.json"
         securityContext:
           runAsNonRoot: true
+        volumeMounts:
+          - name: gke-express-sa-secret-v
+            mountPath: /secrets/
+            readOnly: true
